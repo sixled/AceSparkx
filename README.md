@@ -36,7 +36,7 @@ Para solucionar esto:
 3. Se habilitó `CONFIG_USB_ACM=m` en la configuración del kernel.
 4. Se compiló el controlador CDC ACM para arquitectura ARM.
 5. Se transfirió el módulo compilado a la Spark i7 y se cargó en Tina Linux.
-
+Se genero el archivo cdc-acm.ko y se incorporo .
 
 
 **Importante:**  Para compilar es necesario preparar previamente las fuentes y la configuración compatibles con el kernel de la impresora.
@@ -55,6 +55,7 @@ Esto permitió utilizar `/dev/ttyACM0` para establecer comunicación serial con 
 El ACE Pro presenta un problema de desconexiones aproximadamente cada **3 segundos cuando permanece en reposo**.
 
 Este comportamiento corresponde al propio AMS y no se consiguió corregir.
+Esto  es fundamental porque si le pedís ayuda a las IA   suele desviarse y querer arreglar el bug que tiene el ams .
 
 Durante las pruebas se comprobó que no impedía realizar cambios automáticos de filamento ni completar impresiones multicolor.
 
