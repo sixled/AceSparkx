@@ -92,8 +92,8 @@ El sistema aprovecha el cortador, extrusor, sensor de filamento y rutinas de pur
 - [x] Control de los cuatro filamentos.
 - [x] Cambios automáticos durante la impresión.
 - [x] Integración con PrusaSlicer.
-- [ ] Optimización del tiempo de cambio de filamento.
-- [ ] Purga variable según los colores.
+- [x] Optimización del tiempo de cambio de filamento.
+- [x] Purga variable según los colores.
 - [ ] Mejoras en la recuperación ante errores.
 
 ## Compatibilidad
@@ -107,8 +107,101 @@ El sistema aprovecha el cortador, extrusor, sensor de filamento y rutinas de pur
 - **Comunicación:** USB CDC ACM
 - **Slicer:** cualquiera
 
-## Aviso
 
+# Creality SPARKX i7 - USB CDC ACM Driver
+
+Este módulo habilita la comunicación USB serial con dispositivos compatibles con CDC ACM en la Creality SPARKX i7, permitiendo utilizar dispositivos externos como el Anycubic ACE Pro.
+
+## Compatibilidad
+
+- Impresora: Creality SPARKX i7.
+- Sistema operativo: Tina Linux.
+- Kernel: 5.4.61.
+- Arquitectura: ARMv7l.
+- Compilación: #16 SMP PREEMPT.
+- Fecha del kernel: 2 de septiembre de 2026.
+
+## Instalación
+
+### 1. Comprobar la versión del kernel
+
+Conectarse a la impresora mediante SSH y ejecutar:
+
+```bash
+uname -a
+```
+
+Verificar que el kernel sea compatible con la versión indicada anteriormente.
+
+### 2. Transferir el archivo
+
+Descargar `cdc-acm.ko` desde este repositorio.
+
+Desde PowerShell de Windows, ejecutar:
+
+```powershell
+scp -O cdc-acm.ko root@IP_IMPRESORA:/mnt/UDISK/
+```
+La contraseña se encuentra  al acceder en la pantalla de la impresora configuracion usuario.
+Reemplazar `IP_IMPRESORA` por la dirección IP de la impresora.
+
+### 3. Instalar el módulo
+
+Conectarse mediante SSH y ejecutar los siguientes comandos con la impresora en reposo:
+
+```bash
+insmod /mnt/UDISK/cdc-acm.ko
+```
+
+Si no aparecen errores, ejecutar:
+
+```bash
+cp /mnt/UDISK/cdc-acm.ko /lib/modules/5.4.61/
+echo cdc-acm > /etc/modules.d/90-cdc-acm
+```
+
+### 4. Reiniciar la impresora
+
+```bash
+reboot
+```
+
+### 5. Verificar el funcionamiento
+
+Conectar el AcePRo y ejecutar:
+
+```bash
+ls /dev/ttyACM*
+```
+
+El dispositivo debería aparecer como:
+
+```text
+/dev/ttyACM0
+```
+
+## Desinstalación
+
+Con la impresora en reposo y el dispositivo USB desconectado:
+
+```bash
+rm -f /etc/modules.d/90-cdc-acm
+rm -f /lib/modules/5.4.61/cdc-acm.ko
+reboot
+```
+
+## Advertencias
+
+- Se requiere acceso root mediante SSH.
+- El módulo no modifica Klipper.
+- El módulo no genera automáticamente identificadores persistentes `/dev/serial/by-id/`.
+- Una actualización del firmware de Creality podría eliminar el módulo o generar incompatibilidades.
+- No forzar la instalación si el kernel devuelve un error de compatibilidad.
+- Utilizar bajo su propia responsabilidad.
+
+## Licencia
 Proyecto experimental y no oficial, sin relación con Creality ni Anycubic.
+GPL-2.0, conforme a la licencia del controlador CDC ACM de Linux.
 
 Se recomienda realizar copias de seguridad antes de modificar el firmware o instalar componentes del kernel.
+
